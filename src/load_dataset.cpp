@@ -4,13 +4,14 @@
 #include <load_dataset.hpp>
 #include <vector>
 
+unsigned int reverse_endianness(unsigned int num);
+
 std::vector<uint8_t> load_labels(std::string path)
 {
     std::ifstream file;
     std::vector<uint8_t> labels;
     unsigned int magic_number;
     unsigned int num_labels;
-    uint8_t tmp;
 
     file.open(path, std::ios::binary | std::ios::in);
     
@@ -31,9 +32,9 @@ std::vector<uint8_t> load_labels(std::string path)
     }
 
 
+    labels.resize(num_labels);
     for (int i = 0; i < num_labels; i++) {
-        file.read((char *)&tmp, sizeof(tmp));
-        labels.push_back(tmp);
+        file.read((char *)&labels[i], sizeof(labels[i]));
         
         // Sanity check
         if (labels[i] > 9) {
@@ -83,12 +84,11 @@ std::vector<std::vector<uint8_t>> load_images(std::string path)
     }
 
     for (int i = 0; i < num_images; i++) {
-        std::vector<uint8_t> tmp;
+        std::vector<uint8_t> tmp(num_rows * num_cols);
         uint8_t pixel;
 
-        for (int pixel = 0; pixel < (num_rows * num_cols); pixel++) {
-            file.read((char *)&pixel, sizeof(pixel));
-            tmp.push_back(pixel);
+        for (int p = 0; p < (num_rows * num_cols); p++) {
+            file.read((char *)&tmp[p], sizeof(tmp[p]));
         }
 
         images.push_back(tmp);
@@ -103,4 +103,27 @@ unsigned int reverse_endianness(unsigned int num)
            ((num & 0x00FF0000) >> 8)  | 
            ((num & 0x0000FF00) << 8)  | 
            ((num & 0x000000FF) << 24);
+}
+
+void print_dataset(std::vector<uint8_t>& labels, std::vector<std::vector<uint8_t>>& images)
+{
+    for (int i = 0; i < images.size(); i++) {
+        std::cout << (int) labels[i] << std::endl;
+        print_image(images[i]);
+    }
+}
+
+void print_image(std::vector<uint8_t>& image)
+{
+    for (int r = 0; r < 28; r++) {
+        for (int c = 0; c < 28; c++) {
+            if (image[r * 28 + c] > 0) {
+                std::cout << "# ";
+            } else {
+                std::cout << ". ";
+            }
+        }
+
+        std::cout << std::endl;
+    }
 }

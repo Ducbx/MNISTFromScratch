@@ -6,8 +6,8 @@
 
 std::vector<uint8_t> load_labels(std::string path);
 std::vector<std::vector<uint8_t>> load_images(std::string path);
-
-unsigned int reverse_endianness(unsigned int num);
+void print_dataset(std::vector<uint8_t>& labels, std::vector<std::vector<uint8_t>>& images);
+void print_image(std::vector<uint8_t>& image);
 
 #endif
 
