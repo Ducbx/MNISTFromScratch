@@ -3,6 +3,10 @@
 #include <LinearLayer.hpp>
 #include <math.h>
 
+// XXX Need to optimize these functions to do ops in place or in a buffer
+// XXX I guess I should measure vector allocation overhead first
+// XXX Also, try and change code so g++ will auto vectorize it (in the mat-vec mul)
+
 std::vector<float> sigmoid(std::vector<float> input);
 
 NeuralNetwork::NeuralNetwork(int input_width, int input_height, int output_size, const std::vector<int> hl_node_counts)
@@ -20,7 +24,6 @@ NeuralNetwork::NeuralNetwork(int input_width, int input_height, int output_size,
 
     this->layers.push_back(LinearLayer(output_size, in_dim));
 }
-
 
 std::vector<float> NeuralNetwork::forward(std::vector<float> input)
 {
