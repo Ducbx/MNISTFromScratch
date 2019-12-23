@@ -28,21 +28,13 @@ std::vector<uint8_t> load_labels(std::string path)
 
     if (magic_number != 0x00000801) {
         std::cerr << "Expected magic number: " << 0x00000801 << "\tMagic number read: " << magic_number << std::endl;
+        file.close();
         return labels;
     }
 
 
     labels.resize(num_labels);
-    for (int i = 0; i < num_labels; i++) {
-        file.read((char *)&labels[i], sizeof(labels[i]));
-        
-        // Sanity check
-        if (labels[i] > 9) {
-            std::cerr << "Unexpected label: " << labels[i] << std::endl;
-            labels.resize(0);
-            return labels;
-        }
-    }
+    file.read((char *)&labels[0], sizeof(labels[0]) * num_labels);
 
     return labels;
 }
@@ -75,22 +67,19 @@ std::vector<std::vector<uint8_t>> load_images(std::string path)
 
     if (magic_number != 0x00000803) {
         std::cerr << "Expected magic number: " << 0x00000803 << "\tMagic number read: " << magic_number << std::endl;
+        file.close();
         return images;
     }
 
     if ((num_rows != 28) || (num_cols != 28)) {
         std::cerr << "Expected row, col: (28, 20)" << "\trow, col read: " "(" << num_rows << ", " << num_cols << ")" << std::endl;
+        file.close();
         return images;
     }
 
     for (int i = 0; i < num_images; i++) {
         std::vector<uint8_t> tmp(num_rows * num_cols);
-        uint8_t pixel;
-
-        for (int p = 0; p < (num_rows * num_cols); p++) {
-            file.read((char *)&tmp[p], sizeof(tmp[p]));
-        }
-
+        file.read((char *)&tmp[0], sizeof(tmp[0]) * num_rows * num_cols);
         images.push_back(tmp);
     }
 
