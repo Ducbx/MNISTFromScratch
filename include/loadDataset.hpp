@@ -1,5 +1,5 @@
-#ifndef LOAD_DATASET_HPP
-#define LOAD_DATASET_HPP 
+#ifndef loadDataset_HPP
+#define loadDataset_HPP 
 
 #include <string>
 #include <vector>

@@ -1,7 +1,7 @@
 #include <vector>
-#include <load_dataset.hpp>
+#include <loadDataset.hpp>
 #include <iostream>
-#include <LinearLayer.hpp>
+#include <NeuralNetwork.hpp>
 
 int main(int argc, char const *argv[])
 {
@@ -10,6 +10,18 @@ int main(int argc, char const *argv[])
 
     std::vector<std::vector<uint8_t>> test_images = load_images("../dataset/t10k-images-idx3-ubyte");
     std::vector<std::vector<uint8_t>> train_images = load_images("../dataset/train-images-idx3-ubyte");
+
+    NeuralNetwork net = NeuralNetwork(3, 3, 4, {8, 7, 6, 5});
+
+    std::cout << net << std::endl;
+
+    std::vector<float> input{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8};
+
+    auto out = net.forward(input);
+
+    for (float o : out) {
+        std::cout << o << std::endl;
+    }
 
     return 0;
 }
