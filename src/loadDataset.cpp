@@ -6,10 +6,12 @@
 
 unsigned int reverse_endianness(unsigned int num);
 
-std::vector<uint8_t> load_labels(std::string path)
+std::vector<float> load_labels(std::string path)
 {
     std::ifstream file;
-    std::vector<uint8_t> labels;
+    std::vector<uint8_t> tmp;
+    std::vector<float> labels;
+
     unsigned int magic_number;
     unsigned int num_labels;
 
@@ -33,16 +35,19 @@ std::vector<uint8_t> load_labels(std::string path)
     }
 
 
-    labels.resize(num_labels);
-    file.read((char *)&labels[0], sizeof(labels[0]) * num_labels);
+    tmp.resize(num_labels);
+    file.read((char *)&tmp[0], sizeof(tmp[0]) * num_labels);
+
+    labels.assign(tmp.begin(), tmp.end());
 
     return labels;
 }
 
-std::vector<std::vector<uint8_t>> load_images(std::string path)
+std::vector<std::vector<float>> load_images(std::string path)
 {
     std::ifstream file;
-    std::vector<std::vector<uint8_t>> images;
+    std::vector<std::vector<float>> images;
+
     unsigned int magic_number;
     unsigned int num_images;
     unsigned int num_rows;
@@ -80,7 +85,9 @@ std::vector<std::vector<uint8_t>> load_images(std::string path)
     for (int i = 0; i < num_images; i++) {
         std::vector<uint8_t> tmp(num_rows * num_cols);
         file.read((char *)&tmp[0], sizeof(tmp[0]) * num_rows * num_cols);
-        images.push_back(tmp);
+
+        std::vector<float> tmp2(tmp.begin(), tmp.end());
+        images.push_back(tmp2);
     }
 
     return images;
@@ -94,7 +101,7 @@ unsigned int reverse_endianness(unsigned int num)
            ((num & 0x000000FF) << 24);
 }
 
-void print_dataset(std::vector<uint8_t>& labels, std::vector<std::vector<uint8_t>>& images)
+void print_dataset(std::vector<std::vector<float>>& images, std::vector<float>& labels)
 {
     for (int i = 0; i < images.size(); i++) {
         std::cout << (int) labels[i] << std::endl;
@@ -102,7 +109,7 @@ void print_dataset(std::vector<uint8_t>& labels, std::vector<std::vector<uint8_t
     }
 }
 
-void print_image(std::vector<uint8_t>& image)
+void print_image(std::vector<float>& image)
 {
     for (int r = 0; r < 28; r++) {
         for (int c = 0; c < 28; c++) {
