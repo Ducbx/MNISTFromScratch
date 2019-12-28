@@ -3,14 +3,15 @@
 #include <iomanip>
 #include <loadDataset.hpp>
 #include <vector>
+#include <algorithm> 
 
 unsigned int reverse_endianness(unsigned int num);
 
-std::vector<float> load_labels(std::string path)
+std::vector<Matrix> load_labels(std::string path)
 {
     std::ifstream file;
-    std::vector<uint8_t> tmp;
-    std::vector<float> labels;
+    std::vector<uint8_t> buf;
+    std::vector<Matrix> labels;
 
     unsigned int magic_number;
     unsigned int num_labels;
@@ -35,18 +36,24 @@ std::vector<float> load_labels(std::string path)
     }
 
 
-    tmp.resize(num_labels);
-    file.read((char *)&tmp[0], sizeof(tmp[0]) * num_labels);
+    buf.resize(num_labels);
+    file.read((char *)&buf[0], sizeof(buf[0]) * num_labels);
 
-    labels.assign(tmp.begin(), tmp.end());
+    for (int i = 0; i < num_labels; i++) {
+        Matrix tmp = Matrix(10, 1);
+        tmp(buf[i]) = 1.0f;
+
+        labels.push_back(tmp);
+    }
 
     return labels;
 }
 
-std::vector<std::vector<float>> load_images(std::string path)
+std::vector<Matrix> load_images(std::string path)
 {
     std::ifstream file;
-    std::vector<std::vector<float>> images;
+    std::vector<Matrix> images;
+    std::vector<uint8_t> buf;
 
     unsigned int magic_number;
     unsigned int num_images;
@@ -82,15 +89,44 @@ std::vector<std::vector<float>> load_images(std::string path)
         return images;
     }
 
+    buf.resize(num_rows * num_cols);
     for (int i = 0; i < num_images; i++) {
-        std::vector<uint8_t> tmp(num_rows * num_cols);
-        file.read((char *)&tmp[0], sizeof(tmp[0]) * num_rows * num_cols);
+        file.read((char *)&buf[0], sizeof(buf[0]) * num_rows * num_cols);
+        
+        Matrix tmp = Matrix(num_rows * num_cols, 1);
+        tmp.data.assign(buf.begin(), buf.end());
 
-        std::vector<float> tmp2(tmp.begin(), tmp.end());
-        images.push_back(tmp2);
+        images.push_back(Matrix::divide(tmp, 255.0f));
     }
 
     return images;
+}
+
+void print_dataset(const std::vector<Matrix>& images, const std::vector<Matrix>& labels)
+{   
+    for (int i = 0; i < images.size(); i++) {
+        print_image(images[i], labels[i]);
+        std::cout << std::endl;
+    }
+}
+
+void print_image(const Matrix& image, const Matrix& label)
+{
+    for (int r = 0; r < 28; r++) {
+        for (int c = 0; c < 28; c++) {
+            if (image(r * 28 + c) > 0) {
+                std::cout << "# ";
+            } else {
+                std::cout << ". ";
+            }
+        }
+
+        if ( (r > 7) && (r < 18)) {
+            std::cout << "   " << r - 8 << ": " << label(r - 8);
+        }
+
+        std::cout << std::endl;
+    }
 }
 
 unsigned int reverse_endianness(unsigned int num)
@@ -99,27 +135,4 @@ unsigned int reverse_endianness(unsigned int num)
            ((num & 0x00FF0000) >> 8)  | 
            ((num & 0x0000FF00) << 8)  | 
            ((num & 0x000000FF) << 24);
-}
-
-void print_dataset(std::vector<std::vector<float>>& images, std::vector<float>& labels)
-{
-    for (int i = 0; i < images.size(); i++) {
-        std::cout << (int) labels[i] << std::endl;
-        print_image(images[i]);
-    }
-}
-
-void print_image(std::vector<float>& image)
-{
-    for (int r = 0; r < 28; r++) {
-        for (int c = 0; c < 28; c++) {
-            if (image[r * 28 + c] > 0) {
-                std::cout << "# ";
-            } else {
-                std::cout << ". ";
-            }
-        }
-
-        std::cout << std::endl;
-    }
 }

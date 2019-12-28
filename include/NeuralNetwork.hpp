@@ -2,7 +2,7 @@
 #define NEURALNETWORK_HPP
 
 #include <vector>
-#include <LinearLayer.hpp>
+#include <matrix.hpp>
 
 class NeuralNetwork
 {
@@ -10,11 +10,11 @@ public:
     int in_w;
     int in_h;
     int o_size;
-    std::vector<LinearLayer> layers;
+    std::vector<Matrix> layers;
 
-    NeuralNetwork(int input_width, int input_height, int output_size, const std::vector<int> hl_node_counts);
+    NeuralNetwork(const std::vector<int> hl_node_counts);
 
-    std::vector<float> forward(std::vector<float> input);
+    Matrix forward(Matrix input);
 
     // Overloads
     friend std::ostream& operator<<(std::ostream& os, NeuralNetwork& dt);

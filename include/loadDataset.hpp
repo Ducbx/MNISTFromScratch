@@ -3,12 +3,12 @@
 
 #include <string>
 #include <vector>
+#include <matrix.hpp>
 
-std::vector<float> load_labels(std::string path);
-std::vector<std::vector<float>> load_images(std::string path);
+std::vector<Matrix> load_labels(std::string path);
+std::vector<Matrix> load_images(std::string path);
 
-void print_dataset(std::vector<std::vector<float>>& images, std::vector<float>& labels);
-void print_image(std::vector<float>& image);
+void print_dataset(const std::vector<Matrix>& images, const std::vector<Matrix>& labels);
+void print_image(const Matrix& image, const Matrix& label);
 
 #endif
-
