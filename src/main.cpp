@@ -2,8 +2,9 @@
 #include <loadDataset.hpp>
 #include <iostream>
 #include <NeuralNetwork.hpp>
+#include <training.hpp>
 
-int main(int argc, char const *argv[])
+int main()
 {
     std::vector<Matrix> train_labels = load_labels("../dataset/train-labels-idx1-ubyte");
     std::vector<Matrix> test_labels = load_labels("../dataset/t10k-labels-idx1-ubyte");
@@ -15,9 +16,16 @@ int main(int argc, char const *argv[])
 
     std::cout << net << std::endl;
 
-    auto out = net.forward(train_images[0]);
-    std::cout << out << std::endl;
-    // evaluate_network(net, train_images, train_labels);
-    
+    std::cout << "Initial performance: " << evaluate_network(net, test_images, test_labels, false) * 100 << "%" << std::endl;
+    for (int i = 0; i < 10000; i++) {
+        std::cout << "###################################################" << std::endl;
+        std::cout << "Epoch " << i + 1 << std::endl;
+
+        train_iteration(net, train_images, train_labels, 0.2f);
+
+        float accuracy = evaluate_network(net, test_images, test_labels, true);
+        std::cout << "Test set accuracy: " << accuracy * 100 << "%" << std::endl;
+    }
+
     return 0;
 }

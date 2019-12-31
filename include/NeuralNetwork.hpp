@@ -14,7 +14,8 @@ public:
 
     NeuralNetwork(const std::vector<int> hl_node_counts);
 
-    Matrix forward(Matrix input);
+    Matrix forward(const Matrix& input) const;
+    std::vector<Matrix> forwardGrad(const Matrix& input) const;
 
     // Overloads
     friend std::ostream& operator<<(std::ostream& os, NeuralNetwork& dt);

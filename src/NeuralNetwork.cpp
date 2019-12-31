@@ -21,14 +21,29 @@ NeuralNetwork::NeuralNetwork(const std::vector<int> hl_node_counts)
     }
 }
 
-Matrix NeuralNetwork::forward(Matrix input)
+Matrix NeuralNetwork::forward(const Matrix& input) const
 {
-    for (Matrix& layer : this->layers) {
-        input = Matrix::matmul(layer, input);
-        input = Matrix::sigmoid(input);
+    Matrix out = input;
+    for (const Matrix& layer : this->layers) {
+        out = Matrix::matmul(layer, out);
+        out = Matrix::sigmoid(out);
     }
 
-    return input;
+    return out;
+}
+
+std::vector<Matrix> NeuralNetwork::forwardGrad(const Matrix& input) const
+{
+    std::vector<Matrix> activations; // Only need activations as logistic function derivative can be defined
+                                     // in terms of the function itself
+    Matrix out = input;
+    for (const Matrix& layer : this->layers) {
+        out = Matrix::matmul(layer, out);
+        out = Matrix::sigmoid(out);
+        activations.push_back(out);
+    }
+
+    return activations;
 }
 
 std::ostream& operator<<(std::ostream& os, NeuralNetwork& obj)

@@ -102,14 +102,6 @@ std::vector<Matrix> load_images(std::string path)
     return images;
 }
 
-void print_dataset(const std::vector<Matrix>& images, const std::vector<Matrix>& labels)
-{   
-    for (int i = 0; i < images.size(); i++) {
-        print_image(images[i], labels[i]);
-        std::cout << std::endl;
-    }
-}
-
 void print_image(const Matrix& image, const Matrix& label)
 {
     for (int r = 0; r < 28; r++) {
