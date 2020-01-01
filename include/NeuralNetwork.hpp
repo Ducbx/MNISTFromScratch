@@ -16,6 +16,7 @@ public:
 
     Matrix forward(const Matrix& input) const;
     std::vector<Matrix> forwardGrad(const Matrix& input) const;
+    void clip_weights(float min);
 
     // Overloads
     friend std::ostream& operator<<(std::ostream& os, NeuralNetwork& dt);

@@ -1,5 +1,6 @@
 #include <vector>
 #include <NeuralNetwork.hpp>
+#include <cmath>
 
 NeuralNetwork::NeuralNetwork(const std::vector<int> hl_node_counts)
 {
@@ -58,4 +59,15 @@ std::ostream& operator<<(std::ostream& os, NeuralNetwork& obj)
     }
 
     return os;
+}
+
+void NeuralNetwork::clip_weights(float min)
+{
+    for (Matrix& layer : this->layers) {
+        for (float& weight : layer.data) {
+            if (std::abs(weight) < min) {
+                weight = 0.0f;
+            }
+        }
+    }
 }

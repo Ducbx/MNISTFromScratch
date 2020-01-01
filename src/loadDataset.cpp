@@ -102,25 +102,6 @@ std::vector<Matrix> load_images(std::string path)
     return images;
 }
 
-void print_image(const Matrix& image, const Matrix& label)
-{
-    for (int r = 0; r < 28; r++) {
-        for (int c = 0; c < 28; c++) {
-            if (image(r * 28 + c) > 0) {
-                std::cout << "# ";
-            } else {
-                std::cout << ". ";
-            }
-        }
-
-        if ( (r > 7) && (r < 18)) {
-            std::cout << "   " << r - 8 << ": " << label(r - 8);
-        }
-
-        std::cout << std::endl;
-    }
-}
-
 unsigned int reverse_endianness(unsigned int num)
 {
     return ((num & 0xFF000000) >> 24) | 

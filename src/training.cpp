@@ -12,20 +12,21 @@ std::vector<std::vector<int>> get_minibatch_indices(int n_examples, int batch_si
 void print_evaluation(const Matrix& image, const Matrix& label, const Matrix& out);
 
 
-void train_iteration(NeuralNetwork& net, const std::vector<Matrix>& images, const std::vector<Matrix>& labels, float learning_rate)
+void train_iteration(NeuralNetwork& net, const std::vector<Matrix>& images, const std::vector<Matrix>& labels, int batch_size, float learning_rate)
 {
-    int batch_size = 4096;
     std::vector<std::vector<int>> minibatch_indices = get_minibatch_indices(images.size(), batch_size);
 
     for (std::vector<int>& batch : minibatch_indices) {
         std::vector<std::vector<Matrix>> delta_weights(batch.size());
 
+        // Calculate dC/dw over batch in parallel
         #pragma omp parallel for schedule(guided)
         for (int i = 0; i < batch.size(); i++) {
             int index = batch[i];
             delta_weights[i] = backprop(net, images[index], labels[index]);
         }
 
+        // Apply gradient
         gradient_descent(net, delta_weights, learning_rate);
     }
 }
@@ -39,7 +40,7 @@ std::vector<Matrix> backprop(const NeuralNetwork& net, const Matrix& image, cons
 
     // Calculate deltas at each node
     for (int i = net.layers.size() - 1; i >= 0; i--) {
-        da_dz = Matrix::schur(
+        da_dz = Matrix::schur( // Calculation is the same at every layer
             activations[i],
             Matrix::sub(Matrix(activations[i].n_rows, activations[i].n_cols, 1.0f), activations[i])
         );
@@ -66,16 +67,18 @@ std::vector<Matrix> backprop(const NeuralNetwork& net, const Matrix& image, cons
 void gradient_descent(NeuralNetwork& net, std::vector<std::vector<Matrix>>& delta_weights, float learning_rate)
 {
     std::vector<Matrix> avg_deltas;
-    for (Matrix& mat : net.layers) {
+    for (const Matrix& mat : net.layers) {
         avg_deltas.push_back(Matrix(mat.n_rows, mat.n_cols));
     }
 
-    for (std::vector<Matrix>& delta : delta_weights) {
+    // Sum up delta weights
+    for (const std::vector<Matrix>& delta : delta_weights) {
         for (int i = 0; i < delta.size(); i++) {
             avg_deltas[i] = Matrix::add(avg_deltas[i], delta[i]);
         }
     }
 
+    // Apply gradients
     for (int i = 0; i < net.layers.size(); i++) {
         net.layers[i] = Matrix::add(net.layers[i], Matrix::divide(avg_deltas[i], delta_weights.size() * (1.0f / learning_rate)));
     }
@@ -85,9 +88,10 @@ float evaluate_network(const NeuralNetwork& net, const std::vector<Matrix>& imag
 {
     int correct = 0;
     
+    // Reduce over correct
     #pragma omp parallel for reduction(+ : correct)
     for (int index = 0; index < images.size(); index++) {
-        Matrix out = net.forward(images[index]);
+        const Matrix out = net.forward(images[index]);
 
         if (Matrix::argmax(out) == Matrix::argmax(labels[index])) {
             correct++;
@@ -134,13 +138,14 @@ void print_evaluation(const Matrix& image, const Matrix& label, const Matrix& ou
                 std::cout << ". ";
             }
         }
+
         if (r == 8) {
             std::cout << "\t      Out     Label";
-        }
-        if ( (r > 9) && (r < 20)) {
+        } else if ( (r > 9) && (r < 20)) {
             std::cout << "\t" << r - 10 << ":   " << std::fixed << std::setprecision(2) << out(r-10);
             std::cout << "\t" << (int)label(r-10);
         }
+
         std::cout << std::endl;
     }
 }

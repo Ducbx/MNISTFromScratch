@@ -4,15 +4,15 @@
 
 Classifying hand written digits with a neural network from the ground up. In this I have implemented the following from scratch:
 
-    * Backpropogation algorithm
-    * Neural Network class
-    * Parallelization (with OpenMP, so not entirely from scratch)
-    * Necessary linear algebra operations (transpose, matrix multiplication, etc.)
-    * Dataset loading from binary distribution
+    - Backpropogation algorithm
+    - Neural Network class
+    - Parallelization (with OpenMP, so not entirely from scratch)
+    - Necessary linear algebra operations (transpose, matrix multiplication, etc.)
+    - Dataset loading from binary distribution
 
 ## Features
 
-    * Batch level and dataset-level parallelization with OpenMP
-    * Pretty printing of image and evaluation of image by network
-    * Zero'ing out of small weights (just an experiment)
-    * Script to download dataset (download_dataset.sh)
+    - Batch level and dataset-level parallelization with OpenMP
+    - Pretty printing of image and evaluation of image by network
+    - Zero'ing out of small weights (just an experiment)
+    - Script to download dataset (download_dataset.sh)

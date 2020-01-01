@@ -25,7 +25,6 @@ public:
     static Matrix sub(const Matrix& a, const Matrix& b);
     static Matrix divide(const Matrix& a, float b);
     static Matrix mult(const Matrix& a, float b);
-
     
     static Matrix sigmoid(const Matrix& a);
 
