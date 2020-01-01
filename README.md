@@ -2,13 +2,13 @@
 
 # MNIST From Scratch
 
-Classifying hand written digits with a neural network from the ground up. In this I have implemented the following from scratch:
+Classifying hand written digits with a neural network from the ground up. In this project I have implemented the following from scratch:
 
     - Backpropogation algorithm
-    - Neural Network class
+    - Neural network class
     - Parallelization (with OpenMP, so not entirely from scratch)
     - Necessary linear algebra operations (transpose, matrix multiplication, etc.)
-    - Dataset loading from binary distribution
+    - Loading dataset from binary distribution
 
 ## Features
 
