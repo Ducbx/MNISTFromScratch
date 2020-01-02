@@ -16,3 +16,6 @@ Classifying hand written digits with a neural network from the ground up. In thi
     - Pretty printing of image and evaluation of image by network
     - Zero'ing out of small weights (just an experiment)
     - Script to download dataset (download_dataset.sh)
+
+### Pretty printing output
+![example output](/images/example_output.png)
