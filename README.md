@@ -2,7 +2,7 @@
 
 # MNIST From Scratch
 
-Classifying hand written digits with a neural network from the ground up. In this project I have implemented the following from scratch:
+In an effort to get more familiar with backpropagation I embarked on a project in which I wrote a neural network, a small linear algebra library, and a simple neural network optimizer from scratch. The neural network is trained on the MNIST dataset. I have implemented the following from scratch:
 
     - Backpropagation algorithm
     - Neural network class
