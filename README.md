@@ -4,7 +4,7 @@
 
 Classifying hand written digits with a neural network from the ground up. In this project I have implemented the following from scratch:
 
-    - Backpropogation algorithm
+    - Backpropagation algorithm
     - Neural network class
     - Parallelization (with OpenMP, so not entirely from scratch)
     - Necessary linear algebra operations (transpose, matrix multiplication, etc.)
