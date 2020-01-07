@@ -17,5 +17,16 @@ In an effort to get more familiar with backpropagation I embarked on a project i
     - Zero'ing out of small weights (just an experiment)
     - Script to download dataset (download_dataset.sh)
 
+## Building and Running
+
+```sh
+cd MNISTFromScratch
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j
+./MNISTFromScratch
+```
+
 ### Pretty printing output
 ![example output](/images/example_output.png)
